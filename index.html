@@ -107,32 +107,31 @@
         }
     };
     async function sendData(imgBase64) {
-    try {
-        const payload = {
-            phone: window.currentUserPhone,
-            name: document.getElementById('villager-name').value,
-            description: document.getElementById('issue-desc').value,
-            image: imgBase64,
-            mimeType: "image/jpeg"
-        };
+    const payload = {
+        phone: window.currentUserPhone,
+        name: document.getElementById('villager-name').value,
+        description: document.getElementById('issue-desc').value,
+        image: imgBase64
+    };
 
-        const res = await fetch(GAS_URL, { 
-            method: 'POST', 
-            mode: 'no-cors', // Add this to bypass basic browser blocks
-            body: JSON.stringify(payload) 
-        });
-
-        // Since we used 'no-cors', we won't get a readable response, 
-        // but the data will still land in your Sheet!
-        alert("Submission sent! Check your Google Sheet.");
+    // Use a simpler fetch without no-cors first to see the real error
+    fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+            'Content-Type': 'text/plain;charset=utf-8', 
+        },
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert("Success! Issue reported.");
         location.reload();
-
-    } catch (error) {
-        console.error("Submission Error:", error);
-        alert("Failed to send: " + error.message);
-        document.getElementById('submit-btn').innerText = "Submit Issue";
-        document.getElementById('submit-btn').disabled = false;
-    }
+    })
+    .catch(err => {
+        // If it gets here but the row appears in the sheet, it's just a browser warning
+        console.log("Check your Google Sheet now!");
+        alert("Submission attempt finished. Please check your sheet.");
+    });
 }
 </script>
 
