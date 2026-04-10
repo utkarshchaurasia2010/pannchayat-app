@@ -79,7 +79,7 @@
     };
 
     document.getElementById('verify-otp-btn').onclick = () => {
-        const code = document.getElementById('otp-code').value;
+        const code = document.getElementById('otp-code').value;        
         window.confirmationResult.confirm(code).then(result => {
             window.currentUserPhone = result.user.phoneNumber;
             document.getElementById('login-section').classList.add('hidden');
