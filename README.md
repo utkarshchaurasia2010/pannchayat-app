@@ -1,1 +1,1 @@
-# pannchayat-app
+# panchayat-app
