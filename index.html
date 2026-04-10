@@ -1,1 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Village Issue Tracker</title>
+    <style>
+        /* Simple styling to keep things clean */
+        body { font-family: sans-serif; padding: 20px; max-width: 400px; margin: auto; }
+        .hidden { display: none; }
+        input, button { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+    </style>
+</head>
+<body>
 
+    <h2>Login to Report</h2>
+
+    <div id="phone-screen">
+        <label>Enter Phone Number (with +91)</label>
+        <input type="text" id="phone-number" value="+91" placeholder="+919876543210">
+        <button id="send-code-btn">Send OTP</button>
+        <div id="recaptcha-container"></div> 
+    </div>
+
+    <div id="otp-screen" class="hidden">
+        <label>Enter the 6-digit code</label>
+        <input type="text" id="otp-code" placeholder="123456">
+        <button id="verify-code-btn">Verify & Login</button>
+    </div>
+
+    <div id="app-screen" class="hidden">
+        <h3>Welcome!</h3>
+        <p>You are logged in as: <strong id="user-display"></strong></p>
+        </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+        // 1. Paste your exact config from the Firebase Console here
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // 2. Set up the invisible reCAPTCHA
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+            'size': 'invisible',
+            'callback': (response) => {
+                // reCAPTCHA solved
+            }
+        });
+
+        // 3. Send OTP Logic
+        document.getElementById('send-code-btn').addEventListener('click', () => {
+            const phoneNumber = document.getElementById('phone-number').value;
+            const appVerifier = window.recaptchaVerifier;
+
+            signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+                .then((confirmationResult) => {
+                    window.confirmationResult = confirmationResult;
+                    // Hide phone screen, show OTP screen
+                    document.getElementById('phone-screen').classList.add('hidden');
+                    document.getElementById('otp-screen').classList.remove('hidden');
+                    alert("OTP sent successfully!");
+                }).catch((error) => {
+                    console.error("SMS not sent", error);
+                    alert("Error sending OTP. Check the console.");
+                    // Reset reCAPTCHA so they can try again
+                    grecaptcha.reset(window.recaptchaWidgetId);
+                });
+        });
+
+        // 4. Verify OTP Logic
+        document.getElementById('verify-code-btn').addEventListener('click', () => {
+            const code = document.getElementById('otp-code').value;
+            
+            window.confirmationResult.confirm(code).then((result) => {
+                const user = result.user;
+                // Success! User is logged in.
+                document.getElementById('otp-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
+                document.getElementById('user-display').innerText = user.phoneNumber;
+                
+                // IMPORTANT: Save this phone number in a variable globally 
+                // so you can attach it to the data you send to Google Apps Script
+                window.currentUserPhone = user.phoneNumber;
+
+            }).catch((error) => {
+                alert("Incorrect OTP. Please try again.");
+            });
+        });
+    </script>
+</body>
+</html>
