@@ -1,16 +1,16 @@
 {
-  "name": "E-Panchayat Portal",
+  "name": "Panchayat Portal",
   "short_name": "Panchayat",
-  "description": "Report and track village issues directly to the Panchayat.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1a73e8",
   "icons": [
     {
-      "src": "https://utkarshchaurasia2010.github.io/pannchayat-app/icon.png",
+      "src": "icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
