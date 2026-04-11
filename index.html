@@ -91,15 +91,45 @@
     };
 
     document.getElementById('verify-otp-btn').onclick = () => {
-        const code = document.getElementById('otp-code').value;        
-        window.confirmationResult.confirm(code).then(result => {
-            window.currentUserPhone = result.user.phoneNumber;
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('form-section').classList.remove('hidden');
-            document.getElementById('display-phone').innerText = window.currentUserPhone;
-            loadHistory();
-        });
-    };
+    const code = document.getElementById('otp-code').value;
+    window.confirmationResult.confirm(code).then(result => {
+        window.currentUserPhone = result.user.phoneNumber;
+        
+        // UI Changes
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('form-section').classList.remove('hidden');
+        document.getElementById('display-phone').innerText = window.currentUserPhone;
+
+        // FETCH STATUS HISTORY
+        loadUserHistory(window.currentUserPhone);
+    });
+};
+
+async function loadUserHistory(phone) {
+    const historyDiv = document.getElementById('history-container');
+    historyDiv.innerHTML = "Checking status...";
+
+    try {
+        const response = await fetch(`${GAS_URL}?phone=${encodeURIComponent(phone)}`);
+        const issues = await response.json();
+
+        if (issues.length === 0) {
+            historyDiv.innerHTML = "<p>No past requests found.</p>";
+            return;
+        }
+
+        historyDiv.innerHTML = issues.map(issue => `
+            <div style="border-bottom: 1px solid #ddd; padding: 10px 0;">
+                <small>${new Date(issue.date).toLocaleDateString()}</small><br>
+                <b>Issue:</b> ${issue.description}<br>
+                <b>Status:</b> <span style="color: ${issue.status === 'Resolved' ? 'green' : 'orange'}">${issue.status}</span>
+            </div>
+        `).join('');
+
+    } catch (err) {
+        historyDiv.innerHTML = "Could not load history.";
+    }
+}
 
     // --- SUBMIT LOGIC ---
     document.getElementById('submit-btn').onclick = async () => {
