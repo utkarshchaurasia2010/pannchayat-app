@@ -141,6 +141,30 @@ if ('serviceWorker' in navigator) {
             .catch(err => console.log('PWA Failed', err));
     });
 }
+    // --- STEP 1: SECURITY LOGIC ---
+const adminEmail = "your-email@gmail.com"; // Change this to your actual email
+
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        // If the person logging in is YOU (the Admin)
+        if (user.email === adminEmail) {
+            console.log("Admin Logged In");
+            document.getElementById('form-section').classList.add('hidden');
+            document.getElementById('admin-section').classList.remove('hidden');
+        } else {
+            // If the person is a regular villager
+            console.log("Villager Logged In");
+            document.getElementById('form-section').classList.remove('hidden');
+            document.getElementById('admin-section').classList.add('hidden');
+        }
+        document.getElementById('login-section').classList.add('hidden');
+    } else {
+        // No one is logged in, show the login screen
+        document.getElementById('login-section').classList.remove('hidden');
+        document.getElementById('form-section').classList.add('hidden');
+        document.getElementById('admin-section').classList.add('hidden');
+    }
+});
 </script>
 
 </body>
