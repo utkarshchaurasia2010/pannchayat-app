@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panchayat Portal</title>
+    <link rel="manifest" href="manifest.json">
     <style>
         body { font-family: sans-serif; padding: 20px; background: #f4f4f4; display: flex; justify-content: center; }
         .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
@@ -132,6 +133,14 @@
         alert("Submission attempt finished. Please check your sheet.");
     });
     }
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('PWA Ready'))
+            .catch(err => console.log('PWA Failed', err));
+    });
+}
 </script>
 
 </body>
