@@ -1,0 +1,16 @@
+{
+  "name": "E-Panchayat Portal",
+  "short_name": "Panchayat",
+  "description": "Report and track village issues directly to the Panchayat.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a73e8",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/609/609803.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
