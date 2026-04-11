@@ -46,6 +46,18 @@
         <div id="history-container">Loading past issues...</div>
     </div>
 </div>
+    <div id="admin-section" class="hidden">
+    <h3>Admin Control Panel</h3>
+    <p>Logged in as Admin</p>
+    <hr>
+    <div id="admin-stats">
+        <p>Loading summary...</p>
+    </div>
+    <button onclick="window.open('PASTE_YOUR_GOOGLE_SHEET_URL_HERE', '_blank')">
+        Open Full Spreadsheet
+    </button>
+    <button id="logout-btn" style="background: #d93025; margin-top: 20px;">Logout</button>
+</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
